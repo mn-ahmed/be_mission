@@ -33,6 +33,16 @@
             <field name="padding">3</field>
             <field name="implementation">standard</field>
         </record>
+        <record model="ir.sequence" id="be_mission_ord">
+            <field name="name">Mission Numero</field>
+            <field name="code">reporting.ticket</field>
+            <field name="active">TRUE</field>
+            <field name="prefix">RT</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="padding">3</field>
+            <field name="implementation">standard</field>
+        </record>
 
     </data>
 </odoo>
