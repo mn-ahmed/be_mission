@@ -1,0 +1,74 @@
+<odoo>
+     <data>
+          <report
+            id="report_mission-externe"
+            model="mission.externe"
+            string="Ticket Mission Exerne"
+            report_type="qweb-pdf"
+            name="be_mission.mission_externe_ticket_template"
+            file="be_mission.mission_externe_ticket_template"
+        />
+
+         <template id="mission_externe_ticket_template">
+            <t t-call="web.external_layout">
+             <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+
+                        <div class="page">
+                            <div class="text-center">
+                                <h2>
+                                    <strong><p>Mission Exterene : <span t-field="doc.name"/></p></strong>
+                                 </h2>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                <table style="width:100%;">
+                                    <tbody style="line-height:2">
+                                        <tr>
+                                            <td><strong>Nom et Prénom:</strong></td><td></td>
+                                            <td><strong>&#160;<span t-field="doc.person_name"/></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Passport:</strong></td><td></td>
+                                            <td><span t-field="doc.passport"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                                    <div class="col-xs-6" >
+                                <table style="width:100%;">
+                                    <tbody style="line-height:2">
+                                        <tr>
+                                            <td ><strong>Date:</strong></td><td></td>
+                                            <td>&#160;<span t-field="doc.date_creation"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Date d'expération:</strong></td><td></td>
+                                            <td><span t-field="doc.date_exp"/></td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                                <br/>
+                             <div class="row">
+                                <table class="table table-sm o_main_table">
+                               <tr style="border: 2px solid black;">
+                                   <td><strong>Test Covid</strong></td><td> <span t-field="doc.test_c"/></td>
+                                   <td><strong>Date de Test Covide</strong></td><td> <span t-field="doc.date_c"/></td>
+                               </tr>
+                               <tr style="border: 2px solid black;">
+                                   <td><strong>Objet de Mission</strong></td><td> <span t-field="doc.objet"/></td>
+
+                               </tr>
+                            </table>
+                             </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+         </template>
+     </data>
+</odoo>
