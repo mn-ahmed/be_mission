@@ -11,8 +11,8 @@
     <menuitem name="Mission Ordinaire" id="be_mission_ordinaire" parent="be_mission" sequence="30"/>
     <menuitem name="Reporting ticket" id="be_mission_report_teckit" parent="be_mission" sequence="40"/>
 
-    <!-- Mission Externe-->
-    <!-- treeview Mission Externe-->
+  <!-- Mission Externe-->
+  <!-- treeview Mission Externe-->
     <record model="ir.ui.view" id="mission_externe_treeview">
       <field name="name">Mission</field>
       <field name="model">mission.externe</field>
@@ -103,8 +103,7 @@
         </field>
     </record>
 
-    <!-- Mession externe arrivé -->
-
+    <!-- Mession externe arrivé action -->
     <record model="ir.actions.act_window" id="mission_externe_ar_action_window">
       <field name="name">Mission Externe Arrivé</field>
       <field name="res_model">mission.externe</field>
@@ -117,13 +116,11 @@
     <menuitem name="Mission Externe Arrivé" id="be_mission_mission_ext_arrive" parent="be_mission_extern"
               action="mission_externe_ar_action_window"/>
 
-  <!-- Mession externe retour -->
-
+  <!-- Mession externe retour action-->
     <record model="ir.actions.act_window" id="mission_externe_ret_action_window">
       <field name="name">Mission Externe Retour</field>
       <field name="res_model">mission.externe</field>
       <field name="view_id" ref="mission_externe_treeview"/>
-
       <field name="domain">[('mission', '=', 'externe_ret')]</field>
       <field name="context">{'default_mission': 'externe_ret'}</field>
       <field name="view_mode">tree,form</field>
@@ -132,8 +129,8 @@
     <menuitem name="Mission Externe Retour" id="be_mission_mission_ext_retour" parent="be_mission_extern"
               action="mission_externe_ret_action_window"/>
 
-    <!-- Mession interne -->
-        <!-- treeview Mission Interne-->
+  <!-- Mession interne -->
+  <!-- treeview Mission Interne-->
     <record model="ir.ui.view" id="mission_interne_treeview">
       <field name="name">Mission</field>
       <field name="model">mission.interne</field>
@@ -223,15 +220,14 @@
                   </group>
                 </sheet>
               <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
+                  <field name="message_follower_ids" widget="mail_followers"/>
+                  <field name="message_ids" widget="mail_thread"/>
+              </div>
             </form>
         </field>
     </record>
 
     <!-- Mession interne arrivé -->
-
     <record model="ir.actions.act_window" id="mission_interne_ar_action_window">
       <field name="name">Mission étranger départ</field>
       <field name="res_model">mission.interne</field>
@@ -245,7 +241,6 @@
               action="mission_interne_ar_action_window"/>
 
   <!-- Mession interne retour -->
-
     <record model="ir.actions.act_window" id="mission_interne_ret_action_window">
       <field name="name">Mission retour étranger</field>
       <field name="res_model">mission.interne</field>
@@ -258,6 +253,131 @@
 
     <menuitem name="Mission retour étranger" id="be_mission_mission_int_retour" parent="be_mission_interne"
               action="mission_interne_ret_action_window"/>
+
+  <!-- Mession Ordinaire -->
+  <!-- treeview Mission Ordinaire-->
+    <record model="ir.ui.view" id="mission_ordinaire_treeview">
+      <field name="name">Mission</field>
+      <field name="model">mission.ordinaire</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="person_name" />
+          <field name="passport" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))]}" />
+          <field name="date_creation" />
+          <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))]}" />
+          <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))]}" />
+          <field name="mission" invisible="1" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- form view Mission Externe -->
+    <record id="mission_form_view_ordinaire" model="ir.ui.view">
+        <field name="name">mission_view_form</field>
+        <field name="model">mission.ordinaire</field>
+        <field name="arch" type="xml">
+            <form string="Mission">
+              <field name="mission" invisible="1" />
+                <sheet>
+                    <div class="oe_title">
+                      <h1>
+                        <field name="name" readonly="1"/>
+                      </h1>
+                    </div>
+                  <group>
+                    <group>
+                      <field name="person_name" />
+                      <field name="passport" />
+                    </group>
+                    <group>
+                      <field name="date_creation" />
+                      <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
+                      <field name="vehicule" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
+                    </group>
+                  </group>
+                  <group>
+                    <group>
+                      <field name="test_c" />
+                    </group>
+                    <group>
+                      <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
+                    </group>
+                  </group>
+                  <group>
+                    <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
+                      <field name="biller" />
+                      <field name="visa" />
+                    </group>
+                    <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
+                      <field name="l_invitation" />
+                      <field name="vehicule" />
+                    </group>
+                  </group>
+                  <group attrs="{'invisible':[('vehicule', 'not in', 'oui')] }" >
+                    <group>
+                      <field name="n_chauffeur" />
+                      <field name="chauffeur_cont" />
+                    </group>
+                    <group>
+                      <field name="matricule" />
+                      <field name="duree_b" />
+                    </group>
+                  </group>
+                  <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
+                    <group>
+                      <field name="frais_m" />
+                    </group>
+                    <group>
+                      <field name="date_f" attrs="{'invisible':[('frais_m', 'not in', 'oui')] }"/>
+                    </group>
+                  </group>
+                  <group attrs="{'invisible':[('mission', 'not in',('ordinaire_ret'))] }">
+                    <group>
+                      <field name="p_financier" />
+                    </group>
+                    <group>
+                      <field name="date_pf" attrs="{'invisible':[('p_financier', 'not in', 'oui')] }" />
+                    </group>
+                  </group>
+                  <group>
+                    <field name="objet" string="Commentaire" />
+                  </group>
+                </sheet>
+              <div class="oe_chatter">
+                  <field name="message_follower_ids" widget="mail_followers"/>
+                  <field name="message_ids" widget="mail_thread"/>
+              </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Mession ordinaire arrivé -->
+    <record model="ir.actions.act_window" id="mission_ordinaire_ar_action_window">
+      <field name="name">Mission ordinaire départ</field>
+      <field name="res_model">mission.ordinaire</field>
+      <field name="view_id" ref="mission_ordinaire_treeview"/>
+      <field name="domain">[('mission', '=', 'ordinaire_all')]</field>
+      <field name="context">{'default_mission': 'ordinaire_all'}</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Mission ordinaire départ" id="be_mission_mission_int_arrive" parent="be_mission_ordinaire"
+              action="mission_ordinaire_ar_action_window"/>
+
+  <!-- Mession ordinaire retour -->
+    <record model="ir.actions.act_window" id="mission_ordinaire_ret_action_window">
+      <field name="name">Mission ordinaire retour</field>
+      <field name="res_model">mission.ordinaire</field>
+      <field name="view_id" ref="mission_interne_treeview"/>
+
+      <field name="domain">[('mission', '=', 'ordinaire_ret')]</field>
+      <field name="context">{'default_mission': 'ordinaire_ret'}</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Mission ordinaire retour" id="be_mission_mission_int_retour" parent="be_mission_ordinaire"
+              action="mission_ordinaire_ret_action_window"/>
 
   </data>
 </odoo>
