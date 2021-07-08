@@ -11,7 +11,7 @@
     <menuitem name="Mission Ordinaire" id="be_mission_ordinaire" parent="be_mission" sequence="30"/>
     <menuitem name="Reporting ticket" id="be_mission_report_teckit" parent="be_mission" sequence="40"/>
 
-  <!-- Mission Externe-->
+<!-- Mission Externe-->
   <!-- treeview Mission Externe-->
     <record model="ir.ui.view" id="mission_externe_treeview">
       <field name="name">Mission</field>
@@ -129,7 +129,7 @@
     <menuitem name="Mission Externe Retour" id="be_mission_mission_ext_retour" parent="be_mission_extern"
               action="mission_externe_ret_action_window"/>
 
-  <!-- Mession interne -->
+<!-- Mession interne -->
   <!-- treeview Mission Interne-->
     <record model="ir.ui.view" id="mission_interne_treeview">
       <field name="name">Mission</field>
@@ -147,7 +147,7 @@
       </field>
     </record>
 
-    <!-- form view Mission Externe -->
+    <!-- form view Mission Interne -->
     <record id="mission_form_view_interne" model="ir.ui.view">
         <field name="name">mission_view_form</field>
         <field name="model">mission.interne</field>
@@ -245,7 +245,6 @@
       <field name="name">Mission retour étranger</field>
       <field name="res_model">mission.interne</field>
       <field name="view_id" ref="mission_interne_treeview"/>
-
       <field name="domain">[('mission', '=', 'interne_ret')]</field>
       <field name="context">{'default_mission': 'interne_ret'}</field>
       <field name="view_mode">tree,form</field>
@@ -254,7 +253,7 @@
     <menuitem name="Mission retour étranger" id="be_mission_mission_int_retour" parent="be_mission_interne"
               action="mission_interne_ret_action_window"/>
 
-  <!-- Mession Ordinaire -->
+<!-- Mession Ordinaire -->
   <!-- treeview Mission Ordinaire-->
     <record model="ir.ui.view" id="mission_ordinaire_treeview">
       <field name="name">Mission</field>
@@ -362,7 +361,7 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Mission ordinaire départ" id="be_mission_mission_int_arrive" parent="be_mission_ordinaire"
+    <menuitem name="Mission ordinaire départ" id="be_mission_mission_ord_arrive" parent="be_mission_ordinaire"
               action="mission_ordinaire_ar_action_window"/>
 
   <!-- Mession ordinaire retour -->
@@ -376,7 +375,7 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Mission ordinaire retour" id="be_mission_mission_int_retour" parent="be_mission_ordinaire"
+    <menuitem name="Mission ordinaire retour" id="be_mission_mission_ord_retour" parent="be_mission_ordinaire"
               action="mission_ordinaire_ret_action_window"/>
 
   </data>
