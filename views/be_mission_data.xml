@@ -23,7 +23,7 @@
             <field name="implementation">standard</field>
         </record>
 
-        <record model="ir.sequence" id="be_mission_ord">
+        <record model="ir.sequence" id="be_mission_ord1">
             <field name="name">Mission Numero</field>
             <field name="code">mission.ordinaire</field>
             <field name="active">TRUE</field>
@@ -33,11 +33,21 @@
             <field name="padding">3</field>
             <field name="implementation">standard</field>
         </record>
-        <record model="ir.sequence" id="be_mission_ord">
-            <field name="name">Mission Numero</field>
+        <record model="ir.sequence" id="be_mission_ord2">
+            <field name="name">Reporting Number</field>
             <field name="code">reporting.ticket</field>
             <field name="active">TRUE</field>
             <field name="prefix">RT</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="padding">3</field>
+            <field name="implementation">standard</field>
+        </record>
+        <record model="ir.sequence" id="be_mission_ord3">
+            <field name="name">Vayage Number</field>
+            <field name="code">voyage.vacance</field>
+            <field name="active">TRUE</field>
+            <field name="prefix">VV</field>
             <field name="number_increment">1</field>
             <field name="number_next">1</field>
             <field name="padding">3</field>
