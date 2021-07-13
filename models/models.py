@@ -17,8 +17,12 @@ class MissionExterne(models.Model):
         'res.partner', string="Nom et Prénom", required=True)
     employee_id = fields.Many2one('hr.employee', string='Employée', default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1),
                                   required=True, copy=True)
-    date_creation = fields.Date(
-        string='Date de Création', default=fields.Date.context_today, store=True, required=False)
+    date_depart = fields.Date(
+        string='Date de départ', default=fields.Date.context_today, store=True, required=False)
+    date_exp = fields.Date(string='Date d\'expération', required=False)
+
+    date_arriver = fields.Date(
+        string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
     date_exp = fields.Date(string='Date d\'expération', required=False)
 
     @api.onchange('date_exp')
@@ -31,20 +35,31 @@ class MissionExterne(models.Model):
                 raise UserError(
                     "la date d'expiration doit être supérieure à la date de création")
 
-    mission = fields.Selection(string='Mission', selection=[('externe_all', 'Mission Externe Aller'),
-                                                            ('externe_ret', 'Mission Externe Retour'), ],
-                               required=True, store=True, index=True, readonly=True, tracking=True, default="externe_all", change_default=True)
+    mission = fields.Selection(string='Mission', selection=[('externe_ar', 'Mission Externe Arrivé'),
+                                                            ('externe_de', 'Mission Externe Départ'), ],
+                               required=True, index=True, readonly=True, tracking=True, change_default=True)
     passport = fields.Char(string='Numéro de Passport', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
 
-    post_v = fields.Char(string='Poste de voyage', required=False)
+    visa = fields.Selection(string='Visa', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_visa = fields.Date(
+        string='Date',
+        required=False)
+    l_invitation = fields.Selection(string='Lettre d\'invitation', selection=[
+        ('oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_lettre = fields.Date(
+        string='Date',
+        required=False)
+
+    post_v = fields.Char(string='Fonction voyageur', required=False)
     chauffeur = fields.Boolean(string='Chauffeur', required=False)
     n_chauffeur = fields.Char(string='Nom de Chauffeur', required=False)
     chauffeur_cont = fields.Char(string='Contact de Chauffeur', required=False)
     matricule = fields.Char(string='Matricule de Véhicule', required=False)
     duree_b = fields.Char(string='Durée d\'util. de Véhi.', required=False)
-    responsable = fields.Char(string='Nom de Responsable', required=False)
-    post = fields.Char(string='Post de responsable', required=False)
+    responsable = fields.Char(string='Nom personne ressource', required=False)
+    post = fields.Char(string='Fonction personne ressource', required=False)
 
     test_c = fields.Boolean(string='Test COVID', required=False)
     date_c = fields.Date(string='Date de test covid', required=False)
@@ -52,9 +67,15 @@ class MissionExterne(models.Model):
     hotel = fields.Char(string='Nom de Hotel', required=False)
     duree_s = fields.Float(string='Duree de séjour', required=False)
     duree_h = fields.Float(string='Duree de séjour hotel', required=False)
+    autres = fields.Char(
+        string='Autres', 
+        required=False)
+    commentaire = fields.Text(
+        string="Commentaire",
+        required=False)
 
     frais_h = fields.Selection(string='Frais de hotel', selection=[(
-        'employee', 'Employée'), ('webb', 'Webb Fentaine')], required=False, )
+        'employee', 'Employée'), ('webb', 'Webb Fentaine'),('autres', 'Autres')], required=False, )
 
     point_equi = fields.Text(string='Point Equipement', required=False)
     satisfact = fields.Selection(string='Satisfaction', selection=[('mauv', 'Mauvaise'),
@@ -99,14 +120,17 @@ class MissionInterne(models.Model):
                 raise UserError(
                     "la date d'expiration doit être supérieure à la date de création")
 
-    mission = fields.Selection(string='Mission', selection=[('interne_all', 'Mission étranger départ'),
+    mission = fields.Selection(string='Mission', selection=[('interne_dep', 'Mission étranger départ'),
                                                             ('interne_ret', 'Mission étranger retour'), ],
-                               required=True, store=True, index=True, readonly=True, tracking=True, default="interne_all", change_default=True)
+                               required=True, index=True, readonly=True, tracking=True, change_default=True)
 
     passport = fields.Char(string='Numéro de Passport', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
     o_mission = fields.Selection(string='Ordre de mission', selection=[
                                  ('oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_mission = fields.Date(
+        string='Date de mission',
+        required=False)
     biller = fields.Selection(string='Achat Biller d\'avion', selection=[
                               ('oui', 'Oui'), ('non', 'Non')], required=False, )
     visa = fields.Selection(string='Visa', selection=[(
@@ -167,19 +191,24 @@ class MissionOrdinaire(models.Model):
 
     mission = fields.Selection(string='Mission', selection=[('ordinaire_all', 'Mission ordinaire aller'),
                                                             ('ordinaire_ret', 'Mission ordinaire retour'), ],
-                               required=True, store=True, index=True, readonly=True, tracking=True, default="ordinaire_all", change_default=True)
+                               required=True, index=True, readonly=True, tracking=True, change_default=True)
 
-    passport = fields.Char(string='Numéro de Passport', required=False)
+    passport = fields.Char(string='Numéro passeport/CIN', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
     o_mission = fields.Selection(string='Ordre de mission', selection=[
                                  ('oui', 'Oui'), ('non', 'Non')], required=False, )
+
+    date_mission = fields.Date(
+        string='Date de mission',
+        required=False)
+    p_carburant = fields.Selection(string='carburant', selection=[
+        ('oui', 'Oui'), ('non', 'Non')], required=False, )
+
+    date_p_carburant = fields.Date(
+        string='Date de mission',
+        required=False)
     biller = fields.Selection(string='Achat Biller d\'avion', selection=[
                               ('oui', 'Oui'), ('non', 'Non')], required=False, )
-    visa = fields.Selection(string='Visa', selection=[(
-        'oui', 'Oui'), ('non', 'Non')], required=False, )
-    l_invitation = fields.Selection(string='Lettre d\'invitation', selection=[
-                                    ('oui', 'Oui'), ('non', 'Non')], required=False, )
-
     vehicule = fields.Selection(string='Besoin de véhicule?', selection=[
                                 ('oui', 'Oui'), ('non', 'Non')], required=False, )
     n_chauffeur = fields.Char(string='Nom de Chauffeur', required=False)
@@ -222,6 +251,7 @@ class ReportingTicket(models.Model):
                                   required=True, copy=True)
 
     date_v = fields.Date(string='Date de Voyage', store=True, required=False)
+    date_r = fields.Date(string='date retour', required=False)
     trajet = fields.Char(string='Trajet', Required=False)
     nature = fields.Char(string='Nature', required=False)
     montant_b = fields.Float(string='Montant Billet',digits = (12,2))
@@ -229,11 +259,6 @@ class ReportingTicket(models.Model):
     montant_bmt = fields.Float( string='Montant Billet modifié (Trajet)',digits = (12,2))
 
     montant_total = fields.Float(compute='_compute_montant_total', string='Montant total', digits = (12,2))
-
-    # @api.depends('montant_b', 'montant_bm', 'montant_bmt')
-    # def _compute_montant_total(self):
-    #     for rec in self:
-    #         rec.montant_total = rec.montant_b + rec.montant_bm + rec.montant_bmt
 
     @api.depends('montant_b', 'montant_bm', 'montant_bmt')
     def _compute_montant_total(self):

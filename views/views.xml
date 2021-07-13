@@ -9,28 +9,9 @@
     <menuitem name="Mission Externe" id="be_mission_extern" parent="be_mission" sequence="10" />
     <menuitem name="Mission Interne" id="be_mission_interne" parent="be_mission" sequence="20" />
     <menuitem name="Mission Ordinaire" id="be_mission_ordinaire" parent="be_mission" sequence="30"/>
-    <menuitem name="Reporting ticket" id="be_mission_report_teckit" parent="be_mission" sequence="40"/>
+    <menuitem name="Reporting Tecket" id="be_mission_report_teckit" parent="be_mission" sequence="40"/>
 
     <!-- Mission Externe-->
-    <!-- treeview Mission Externe-->
-    <record model="ir.ui.view" id="mission_externe_treeview">
-      <field name="name">Mission</field>
-      <field name="model">mission.externe</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name" />
-          <field name="person_name" />
-          <field name="passport"/>
-          <field name="date_creation" />
-          <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('externe_all'))] }" />
-          <field name="responsable" attrs="{'invisible':[('mission', 'not in',('externe_all'))] }" />
-          <field name="satisfact" attrs="{'invisible':[('mission', 'not in',('externe_all'))] }"/>
-          <field name="point_equi" attrs="{'invisible':[('mission', 'not in',('externe_ret'))] }" />
-          <field name="mission" invisible="1" />
-        </tree>
-      </field>
-    </record>
-
     <!-- form view Mission Externe -->
     <record id="mission_form_view" model="ir.ui.view">
       <field name="name">mission_view_form</field>
@@ -48,27 +29,39 @@
               <group>
                 <field name="person_name" />
                 <field name="passport" />
-                <field name="test_c" attrs="{'invisible':[('mission', 'not in',('externe_ret'))] }"/>
+                <field name="test_c"/>
               </group>
               <group>
-                <field name="date_creation" />
-                <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('externe_all'))] }"/>
-                <field name="satisfact" attrs="{'invisible':[('mission', 'not in',('externe_ret'))] }" />
+                <field name="date_arriver" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }"/>
+                <field name="date_depart" attrs="{'invisible':[('mission', 'not in',('externe_de'))] }"/>
+                <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }"/>
+                 <field name="date_c" />
+                <field name="satisfact" attrs="{'invisible':[('mission', 'not in',('externe_de'))] }" />
               </group>
             </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_all'))] }">
+            <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
+              <group>
+                <field name="visa"/>
+                <field name="date_visa" attrs="{'invisible':[('visa', 'not in',('oui'))] }"/>
+              </group>
+              <group>
+                <field name="l_invitation"/>
+                <field name="date_lettre" attrs="{'invisible':[('l_invitation', 'not in',('oui'))] }"/>
+              </group>
+            </group>
+            <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
               <field name="objet" string="Objet Mission" />
             </group>
             <group>
-              <group attrs="{'invisible':[('mission', 'not in',('externe_all'))] }">
+              <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
                 <field name="post_v" />
-                <field name="test_c" />
                 <field name="hotel" />
                 <field name="frais_h" />
+                <field name="commentaire" attrs="{'invisible':[('frais_h', 'not in',('autres'))] }" />
               </group>
-              <group attrs="{'invisible':[('mission', 'not in',('externe_all'))] }">
+              <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
                 <field name="duree_s" />
-                <field name="date_c" />
+
                 <field name="duree_h" />
                 <field name="chauffeur" />
               </group>
@@ -78,12 +71,12 @@
                 <field name="n_chauffeur" />
                 <field name="chauffeur_cont" />
               </group>
-              <group attrs="{'invisible':[('mission', 'not in',('externe_all'))] }">
+              <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
                 <field name="matricule" />
                 <field name="duree_b" />
               </group>
             </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_all'))] }">
+            <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
               <group>
                 <field name="responsable" />
               </group>
@@ -91,7 +84,7 @@
                 <field name="post" />
               </group>
             </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_ret'))] }">
+            <group attrs="{'invisible':[('mission', 'not in',('externe_de'))] }">
 
             </group>
           </sheet>
@@ -103,29 +96,47 @@
       </field>
     </record>
 
-    <!-- Mession externe arrivé action -->
+    <!-- treeview Mission Externe-->
+    <record model="ir.ui.view" id="mission_externe_treeview">
+      <field name="name">Mission</field>
+      <field name="model">mission.externe</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="person_name" />
+          <field name="passport"/>
+          <field name="date_arriver" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }"/>
+          <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }" />
+          <field name="responsable" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }" />
+
+          <field name="mission" invisible="1" />
+        </tree>
+      </field>
+    </record>
+
+       <!-- Mession externe arrivé action -->
     <record model="ir.actions.act_window" id="mission_externe_ar_action_window">
       <field name="name">Mission Externe Arrivé</field>
       <field name="res_model">mission.externe</field>
       <field name="view_id" ref="mission_externe_treeview"/>
-      <field name="domain">[('mission', '=', 'externe_all')]</field>
-      <field name="context">{'default_mission': 'externe_all'}</field>
+      <field name="domain">[('mission', '=', 'externe_ar')]</field>
+      <field name="context">{'default_mission': 'externe_ar'}</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <menuitem name="Mission Externe Arrivé" id="be_mission_mission_ext_arrive" parent="be_mission_extern" action="mission_externe_ar_action_window"/>
 
     <!-- Mession externe retour action-->
-    <record model="ir.actions.act_window" id="mission_externe_ret_action_window">
-      <field name="name">Mission Externe Retour</field>
+    <record model="ir.actions.act_window" id="mission_externe_dep_action_window">
+      <field name="name">Mission Externe Départ</field>
       <field name="res_model">mission.externe</field>
       <field name="view_id" ref="mission_externe_treeview"/>
-      <field name="domain">[('mission', '=', 'externe_ret')]</field>
-      <field name="context">{'default_mission': 'externe_ret'}</field>
+      <field name="domain">[('mission', '=', 'externe_de')]</field>
+      <field name="context">{'default_mission': 'externe_de'}</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Mission Externe Retour" id="be_mission_mission_ext_retour" parent="be_mission_extern" action="mission_externe_ret_action_window"/>
+    <menuitem name="Mission Externe Départ" id="be_mission_mission_ext_retour" parent="be_mission_extern" action="mission_externe_dep_action_window"/>
 
     <!-- Mession interne -->
     <!-- treeview Mission Interne-->
@@ -162,27 +173,24 @@
               <group>
                 <field name="employee_id" />
                 <field name="passport" />
+                <field name="test_c" />
+                <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
+                <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }"/>
+                <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in',('oui'))] }"/>
               </group>
               <group>
                 <field name="date_creation" />
-                <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('interne_all'))] }"/>
-                <field name="vehicule" attrs="{'invisible':[('mission', 'not in',('interne_ret'))] }"/>
+                <field name="date_exp"/>
+                 <field name="vehicule" attrs="{'invisible':[('mission', 'not in',('interne_ret'))] }"/>
+
               </group>
             </group>
             <group>
-              <group>
-                <field name="test_c" />
-              </group>
-              <group>
-                <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
-              </group>
-            </group>
-            <group>
-              <group attrs="{'invisible':[('mission', 'not in',('interne_all'))] }">
+              <group attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }">
                 <field name="biller" />
                 <field name="visa" />
               </group>
-              <group attrs="{'invisible':[('mission', 'not in',('interne_all'))] }">
+              <group attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }">
                 <field name="l_invitation" />
                 <field name="vehicule" />
               </group>
@@ -197,7 +205,7 @@
                 <field name="duree_b" />
               </group>
             </group>
-            <group attrs="{'invisible':[('mission', 'not in',('interne_all'))] }">
+            <group attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }">
               <group>
                 <field name="frais_m" />
               </group>
@@ -230,8 +238,8 @@
       <field name="name">Mission étranger départ</field>
       <field name="res_model">mission.interne</field>
       <field name="view_id" ref="mission_interne_treeview"/>
-      <field name="domain">[('mission', '=', 'interne_all')]</field>
-      <field name="context">{'default_mission': 'interne_all'}</field>
+      <field name="domain">[('mission', '=', 'interne_dep')]</field>
+      <field name="context">{'default_mission': 'interne_dep'}</field>
       <field name="view_mode">tree,form</field>
     </record>
 
@@ -267,7 +275,7 @@
       </field>
     </record>
 
-    <!-- form view Mission Externe -->
+    <!-- form view Mission ordinaire -->
     <record id="mission_form_view_ordinaire" model="ir.ui.view">
       <field name="name">mission_view_form</field>
       <field name="model">mission.ordinaire</field>
@@ -284,39 +292,28 @@
               <group>
                 <field name="employee_id" />
                 <field name="passport" />
+                <field name="test_c" />
+                <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
+                <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
+                <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in',('oui'))] }"/>
               </group>
               <group>
                 <field name="date_creation" />
-                <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
-                <field name="vehicule" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
-              </group>
-            </group>
-            <group>
-              <group>
-                <field name="test_c" />
-              </group>
-              <group>
-                <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
-              </group>
-            </group>
-            <group>
-              <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
-                <field name="biller" />
-                <field name="visa" />
-              </group>
-              <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
-                <field name="l_invitation" />
+                <field name="date_exp" />
                 <field name="vehicule" />
+                <field name="biller" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
               </group>
             </group>
             <group attrs="{'invisible':[('vehicule', 'not in', 'oui')] }">
               <group>
                 <field name="n_chauffeur" />
                 <field name="chauffeur_cont" />
+                <field name="p_financier" />
               </group>
               <group>
                 <field name="matricule" />
                 <field name="duree_b" />
+                <field name="date_pf" attrs="{'invisible':[('p_financier', 'not in', 'oui')] }" />
               </group>
             </group>
             <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
@@ -408,10 +405,12 @@
             <group>
               <field name="employee_id"/>
               <field name="trajet"/>
+              <field name="nature"/>
             </group>
             <group>
               <field name="date_v"/>
-              <field name="nature"/>
+              <field name="date_r"/>
+
             </group>
           </group>
           <group>
@@ -435,13 +434,13 @@
 
     <!-- action reporting ticket -->
     <record model="ir.actions.act_window" id="reporting_ticket_action_window">
-      <field name="name">Reporting Tecket</field>
+      <field name="name">Frais billet avion</field>
       <field name="res_model">reporting.ticket</field>
       <field name="view_id" ref="mission_reporting_ticket_treeview"/>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Reporting tecket" id="be_menu_reportin_ticket" parent="be_mission_report_teckit" action="reporting_ticket_action_window"/>
+    <menuitem name="Frais billet avion" id="be_menu_reportin_ticket" parent="be_mission_report_teckit" action="reporting_ticket_action_window"/>
 
 
   </data>
