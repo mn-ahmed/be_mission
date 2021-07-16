@@ -18,7 +18,13 @@
       <field name="model">mission.externe</field>
       <field name="arch" type="xml">
         <form string="Mission">
-          <field name="mission" invisible="1" />
+          <header>
+            <!--button name="action_cancel" type="object" string="Annuler" states="draft" /-->
+            <button name="action_arriver" type="object" string="Arriver" states="draft" class="btn-primary" attrs="{'invisible': [('state','not in','draft')]}"/>
+            <button name="action_depart" type="object" string="Depart" states="arriver" class="btn-primary" attrs="{'invisible': [('state','not in','arriver')]}"/>
+            <button name="action_terminer" type="object" string="Terminer" states="depart" class="btn-primary" attrs="{'invisible': [('state','not in','depart')]}"/>
+            <field name="state" widget="statusbar" string="confirm" statusbar_visible="draft,arriver,depart ,terminer" />
+          </header>
           <sheet>
             <div class="oe_title">
               <h1>
@@ -27,66 +33,92 @@
             </div>
             <group>
               <group>
-                <field name="person_name" />
-                <field name="passport" />
-                <field name="test_c"/>
+                <field name="person_name" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="passport" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
               </group>
               <group>
-                <field name="date_arriver" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }"/>
-                <field name="date_depart" attrs="{'invisible':[('mission', 'not in',('externe_de'))] }"/>
-                <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }"/>
-                 <field name="date_c" />
-                <field name="satisfact" attrs="{'invisible':[('mission', 'not in',('externe_de'))] }" />
+                <field name="date" readonly="1"/>
+                <field name="date_exp" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
               </group>
             </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
+            <notebook>
+              <page string="Arrivé" attrs="{'invisible': [('state','not in',('draft','arriver','terminer'))]}">
+                <group >
+                <group>
+                  <field name="date_arriver" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                   <label for="test_ca" string="Test COVID / Date"/>
+                      <div class="o_row" name="test_ca" >
+                          <field name="test_ca" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                          <field name="date_ca" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                      </div>
+              </group>
+                 <group>
+                  <label for="visa" string="VISA / Date" />
+                  <div class="o_row" name="visa">
+                    <field name="visa" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                    <field name="date_visa" attrs="{'invisible':[('visa', 'not in',('oui'))], 'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                  </div>
+                  <label for="l_invitation" string="Lettre d'invitation"/>
+                      <div class="o_row" name="l_invitation" >
+                          <field name="l_invitation" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                          <field name="date_lettre" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                      </div>
+
+              </group>
+                </group>
+                <group>
+              <field name="objet" string="Objet Mission" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+            </group>
+                <group>
               <group>
-                <field name="visa"/>
-                <field name="date_visa" attrs="{'invisible':[('visa', 'not in',('oui'))] }"/>
+                <field name="post_v" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="hotel" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="frais_h" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="commentaire" attrs="{'invisible':[('frais_h', 'not in',('autres'))], 'readonly': [('state', 'not in', ('draft','arriver'))] }" />
               </group>
               <group>
-                <field name="l_invitation"/>
-                <field name="date_lettre" attrs="{'invisible':[('l_invitation', 'not in',('oui'))] }"/>
+                <field name="duree_s" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="duree_h" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="chauffeur" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
               </group>
             </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
-              <field name="objet" string="Objet Mission" />
+                <group attrs="{'invisible':[('chauffeur', '==', False)] }">
+                   <group>
+                <field name="n_chauffeur" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="chauffeur_cont" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+              </group>
+              <group >
+                <field name="matricule" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                <field name="duree_b" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+              </group>
             </group>
             <group>
-              <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
-                <field name="post_v" />
-                <field name="hotel" />
-                <field name="frais_h" />
-                <field name="commentaire" attrs="{'invisible':[('frais_h', 'not in',('autres'))] }" />
+              <group>
+                <field name="responsable" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
               </group>
-              <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
-                <field name="duree_s" />
+              <group>
+                <field name="post" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+              </group>
+            </group>
 
-                <field name="duree_h" />
-                <field name="chauffeur" />
-              </group>
-            </group>
-            <group attrs="{'invisible':[('chauffeur', '==', False)] }">
-              <group>
-                <field name="n_chauffeur" />
-                <field name="chauffeur_cont" />
-              </group>
-              <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
-                <field name="matricule" />
-                <field name="duree_b" />
-              </group>
-            </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }">
-              <group>
-                <field name="responsable" />
-              </group>
-              <group>
-                <field name="post" />
-              </group>
-            </group>
-            <group attrs="{'invisible':[('mission', 'not in',('externe_de'))] }">
+              </page>
+              <page string="Départ" attrs="{'invisible': [('state','not in',('depart','terminer'))]}">
+                <group >
+                  <group>
+                    <field name="date_depart" attrs="{'readonly': [('state', '!=', 'depart')]}"/>
+                    <label for="test_cd" string="Test COVID / Date"/>
+                      <div class="o_row" name="test_cd" >
+                          <field name="test_cd" attrs="{'readonly': [('state', '!=', 'depart')]}"/>
+                          <field name="date_ca" attrs="{'readonly': [('state', '!=', 'depart')]}"/>
+                      </div>
+                  </group>
+                  <group>
+                    <field name="satisfact" attrs="{'readonly': [('state', '!=', 'depart')]}"/>
+                  </group>
+                </group>
+              </page>
+            </notebook>
 
-            </group>
           </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers"/>
@@ -105,38 +137,22 @@
           <field name="name" />
           <field name="person_name" />
           <field name="passport"/>
-          <field name="date_arriver" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }"/>
-          <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }" />
-          <field name="responsable" attrs="{'invisible':[('mission', 'not in',('externe_ar'))] }" />
-
-          <field name="mission" invisible="1" />
+          <field name="date_arriver" />
+          <field name="date_depart" />
         </tree>
       </field>
     </record>
 
        <!-- Mession externe arrivé action -->
     <record model="ir.actions.act_window" id="mission_externe_ar_action_window">
-      <field name="name">Mission Externe Arrivé</field>
+      <field name="name">Mission Externe</field>
       <field name="res_model">mission.externe</field>
       <field name="view_id" ref="mission_externe_treeview"/>
-      <field name="domain">[('mission', '=', 'externe_ar')]</field>
-      <field name="context">{'default_mission': 'externe_ar'}</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Mission Externe Arrivé" id="be_mission_mission_ext_arrive" parent="be_mission_extern" action="mission_externe_ar_action_window"/>
+    <menuitem name="Mission Externe" id="be_mission_mission_ext_arrive" parent="be_mission_extern" action="mission_externe_ar_action_window"/>
 
-    <!-- Mession externe retour action-->
-    <record model="ir.actions.act_window" id="mission_externe_dep_action_window">
-      <field name="name">Mission Externe Départ</field>
-      <field name="res_model">mission.externe</field>
-      <field name="view_id" ref="mission_externe_treeview"/>
-      <field name="domain">[('mission', '=', 'externe_de')]</field>
-      <field name="context">{'default_mission': 'externe_de'}</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem name="Mission Externe Départ" id="be_mission_mission_ext_retour" parent="be_mission_extern" action="mission_externe_dep_action_window"/>
 
     <!-- Mession interne -->
     <!-- treeview Mission Interne-->
@@ -147,11 +163,9 @@
         <tree>
           <field name="name" />
           <field name="employee_id" />
-          <field name="passport" attrs="{'invisible':[('mission', 'not in',('interne_all'))]}" />
-          <field name="date_creation" />
-          <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('interne_all'))]}" />
-          <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('interne_all'))]}" />
-          <field name="mission" invisible="1" />
+          <field name="passport" />
+          <field name="date_depart" />
+          <field name="date_retour"/>
         </tree>
       </field>
     </record>
@@ -162,7 +176,13 @@
       <field name="model">mission.interne</field>
       <field name="arch" type="xml">
         <form string="Mission">
-          <field name="mission" invisible="1" />
+          <header>
+            <!--button name="action_cancel" type="object" string="Annuler" states="draft" /-->
+            <button name="action_depart" type="object" string="Départ" states="draft" class="btn-primary" attrs="{'invisible': [('state','not in','draft')]}"/>
+            <button name="action_retour" type="object" string="Retour" states="depart" class="btn-primary" attrs="{'invisible': [('state','not in','depart')]}"/>
+            <button name="action_terminer" type="object" string="Terminer" states="retour" class="btn-primary" attrs="{'invisible': [('state','not in','retour')]}"/>
+            <field name="state" widget="statusbar" string="confirm" statusbar_visible="draft,depart,retour,terminer" />
+          </header>
           <sheet>
             <div class="oe_title">
               <h1>
@@ -171,59 +191,91 @@
             </div>
             <group>
               <group>
-                <field name="employee_id" />
-                <field name="passport" />
-                <field name="test_c" />
-                <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
-                <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }"/>
-                <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in',('oui'))] }"/>
+                <field name="employee_id" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                <field name="passport" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
               </group>
               <group>
-                <field name="date_creation" />
-                <field name="date_exp"/>
-                 <field name="vehicule" attrs="{'invisible':[('mission', 'not in',('interne_ret'))] }"/>
+                <field name="date" />
+                <field name="date_exp" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+              </group>
+            </group>
+            <notebook>
+            <page string="Départ" attrs="{'invisible': [('state','not in',('draft','depart','terminer'))]}">
+              <group>
+              <group>
+               <field name="date_depart" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+               <label for="test_cd" string="Test COVID / Date"/>
+                <div class="o_row" name="test_cd" >
+                    <field name="test_cd" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <field name="date_cd" attrs="{'invisible':[('test_cd', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                </div>
+                <label for="o_mission" string="Ordre de mission"/>
+                <div class="o_row" name="o_mission">
+                  <field name="o_mission" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                  <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                </div>
+                <field name="biller" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+              </group>
+              <group>
+                  <label for="visa" string="VISA / Date" />
+                  <div class="o_row" name="visa">
+                    <field name="visa" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <field name="date_visa" attrs="{'invisible':[('visa', 'not in',('oui'))], 'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                  </div>
+                  <label for="l_invitation" string="Lettre d'invitation"/>
+                      <div class="o_row" name="l_invitation" >
+                          <field name="l_invitation" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                          <field name="date_lettre" attrs="{'invisible':[('l_invitation', 'not in',('oui'))],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                      </div>
+                <field name="vehicule" attrs="{'readonly':[('state','not in',('draft','depart'))]}" />
+              </group>
+            </group>
+            <group attrs="{'invisible':[('vehicule', 'not in', 'oui')]}">
+              <group>
+                <field name="n_chauffeur" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                <field name="chauffeur_cont" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+              </group>
+              <group >
+                <field name="matricule" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                <field name="duree_b" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+              </group>
+            </group>
+            <group>
+              <group>
+                <field name="frais_m" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+              </group>
+              <group>
+                <field name="date_f" attrs="{'invisible':[('frais_m', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))] }"/>
+              </group>
+            </group>
 
-              </group>
-            </group>
             <group>
-              <group attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }">
-                <field name="biller" />
-                <field name="visa" />
+              <field name="objet" string="Commentaire" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+            </group>
+            </page>
+            <page string="Retour" attrs="{'invisible': [('state','not in',('retour','terminer'))]}">
+              <group>
+                <group>
+               <field name="date_retour" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
               </group>
-              <group attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }">
-                <field name="l_invitation" />
-                <field name="vehicule" />
+                <group>
+                  <label for="test_cr" string="Test COVID / Date"/>
+                  <div class="o_row" name="test_cr" >
+                      <field name="test_cr" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
+                      <field name="date_cr" attrs="{'invisible':[('test_cr', 'not in', 'oui')],'readonly': [('state', 'not in', ('retour'))]}"/>
+                  </div>
+                </group>
+              </group>
+              <group>
+              <group>
+                <field name="p_financier" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
+              </group>
+              <group>
+                <field name="date_pf" attrs="{'invisible':[('p_financier', 'not in', 'oui')],'readonly': [('state', 'not in', ('retour'))] }" />
               </group>
             </group>
-            <group attrs="{'invisible':[('vehicule', 'not in', 'oui')] }">
-              <group>
-                <field name="n_chauffeur" />
-                <field name="chauffeur_cont" />
-              </group>
-              <group>
-                <field name="matricule" />
-                <field name="duree_b" />
-              </group>
-            </group>
-            <group attrs="{'invisible':[('mission', 'not in',('interne_dep'))] }">
-              <group>
-                <field name="frais_m" />
-              </group>
-              <group>
-                <field name="date_f" attrs="{'invisible':[('frais_m', 'not in', 'oui')] }"/>
-              </group>
-            </group>
-            <group attrs="{'invisible':[('mission', 'not in',('interne_ret'))] }">
-              <group>
-                <field name="p_financier" />
-              </group>
-              <group>
-                <field name="date_pf" attrs="{'invisible':[('p_financier', 'not in', 'oui')] }" />
-              </group>
-            </group>
-            <group>
-              <field name="objet" string="Commentaire" />
-            </group>
+            </page>
+            </notebook>
           </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers"/>
@@ -235,27 +287,14 @@
 
     <!-- Mession interne arrivé -->
     <record model="ir.actions.act_window" id="mission_interne_ar_action_window">
-      <field name="name">Mission étranger départ</field>
+      <field name="name">Mission étranger</field>
       <field name="res_model">mission.interne</field>
       <field name="view_id" ref="mission_interne_treeview"/>
-      <field name="domain">[('mission', '=', 'interne_dep')]</field>
-      <field name="context">{'default_mission': 'interne_dep'}</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Mission étranger départ" id="be_mission_mission_int_arrive" parent="be_mission_interne" action="mission_interne_ar_action_window"/>
+    <menuitem name="Mission étranger" id="be_mission_mission_int_arrive" parent="be_mission_interne" action="mission_interne_ar_action_window"/>
 
-    <!-- Mession interne retour -->
-    <record model="ir.actions.act_window" id="mission_interne_ret_action_window">
-      <field name="name">Mission étranger retour</field>
-      <field name="res_model">mission.interne</field>
-      <field name="view_id" ref="mission_interne_treeview"/>
-      <field name="domain">[('mission', '=', 'interne_ret')]</field>
-      <field name="context">{'default_mission': 'interne_ret'}</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem name="Mission étranger retour" id="be_mission_mission_int_retour" parent="be_mission_interne" action="mission_interne_ret_action_window"/>
 
     <!-- Mession Ordinaire -->
     <!-- treeview Mission Ordinaire-->
@@ -266,11 +305,9 @@
         <tree>
           <field name="name" />
           <field name="employee_id" />
-          <field name="passport" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))]}" />
-          <field name="date_creation" />
-          <field name="date_exp" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))]}" />
-          <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))]}" />
-          <field name="mission" invisible="1" />
+          <field name="passport" />
+          <field name="date_depart" />
+          <field name="date_retour" />
         </tree>
       </field>
     </record>
@@ -281,7 +318,13 @@
       <field name="model">mission.ordinaire</field>
       <field name="arch" type="xml">
         <form string="Mission">
-          <field name="mission" invisible="1" />
+          <header>
+            <!--button name="action_cancel" type="object" string="Annuler" states="draft" /-->
+            <button name="action_depart" type="object" string="Départ" states="draft" class="btn-primary" attrs="{'invisible': [('state','not in','draft')]}"/>
+            <button name="action_retour" type="object" string="Retour" states="depart" class="btn-primary" attrs="{'invisible': [('state','not in','depart')]}"/>
+            <button name="action_terminer" type="object" string="Terminer" states="retour" class="btn-primary" attrs="{'invisible': [('state','not in','retour')]}"/>
+            <field name="state" widget="statusbar" string="confirm" statusbar_visible="draft,depart,retour,terminer" />
+          </header>
           <sheet>
             <div class="oe_title">
               <h1>
@@ -290,58 +333,91 @@
             </div>
             <group>
               <group>
-                <field name="employee_id" />
-                <field name="passport" />
-                <field name="test_c" />
-                <field name="date_c" attrs="{'invisible':[('test_c', 'not in',('oui'))] }"/>
-                <field name="o_mission" attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }"/>
-                <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in',('oui'))] }"/>
+                <field name="employee_id" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                <field name="passport" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
               </group>
               <group>
-                <field name="date_creation" />
-                <field name="date_exp" />
-                <field name="vehicule" />
-
+                <field name="date" />
+                <field name="date_exp" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
               </group>
             </group>
-            <group attrs="{'invisible':[('vehicule', 'not in', 'oui')] }">
-              <group>
-                <field name="n_chauffeur" />
-                <field name="chauffeur_cont" />
-                <field name="p_carburant" />
-                <field name="p_financier" />
-              </group>
-              <group>
-                <field name="matricule" />
-                <field name="duree_b" />
-                <field name="date_p_carburant" attrs="{'invisible':[('p_carburant', 'not in', 'oui')] }" />
-                <field name="date_pf" attrs="{'invisible':[('p_financier', 'not in', 'oui')] }" />
-              </group>
-            </group>
-            <group attrs="{'invisible':[('mission', 'not in',('ordinaire_all'))] }">
-              <group>
-                <field name="frais_m" />
-                <field name="equipement"/>
-              </group>
-              <group>
-                <field name="date_f" attrs="{'invisible':[('frais_m', 'not in', 'oui')] }"/>
-                <field name="equipement" attrs="{'invisible':[('equipement', 'not in', 'oui')] }"/>
-              </group>
-            </group>
-            <group attrs="{'invisible':[('mission', 'not in',('ordinaire_ret'))] }">
-              <group>
-                <field name="p_financier" />
-                <field name="p_equipement" />
-              </group>
-              <group>
-                <field name="date_pf" attrs="{'invisible':[('p_financier', 'not in', 'oui')] }" />
-                <field name="date_p_eq" attrs="{'invisible':[('p_equipement', 'not in', 'oui')] }" />
-
-              </group>
-            </group>
-            <group>
-              <field name="objet" string="Commentaire" />
-            </group>
+            <notebook>
+              <page string="Départ" attrs="{'invisible': [('state','not in',('draft','depart','terminer'))]}">
+                <group>
+                  <group>
+                    <field name="date_depart" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <label for="test_cd" string="Test COVID / Date"/>
+                    <div class="o_row" name="test_cd" >
+                      <field name="test_cd" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                      <field name="date_cd" attrs="{'invisible':[('test_cd', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    </div>
+                    <label for="o_mission" string="Ordre de mission"/>
+                    <div class="o_row" name="o_mission">
+                      <field name="o_mission" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                      <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    </div>
+                  </group>
+                  <group>
+                    <field name="vehicule" attrs="{'readonly':[('state','not in',('draft','depart'))]}" />
+                  </group>
+                </group>
+                <group attrs="{'invisible':[('vehicule', 'not in', 'oui')]}">
+                  <group>
+                    <field name="n_chauffeur" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <field name="chauffeur_cont" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <label for="p_carburant" string="Carburant"/>
+                    <div class="o_row" name="p_carburant" >
+                      <field name="p_carburant" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                      <field name="date_p_carburant" attrs="{'invisible':[('p_carburant', 'not in',('oui'))],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    </div>
+                  </group>
+                  <group>
+                    <field name="matricule" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <field name="duree_b" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                  </group>
+                </group>
+                <group>
+                  <group>
+                    <field name="frais_m" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                    <field name="equipement" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                  </group>
+                  <group>
+                    <field name="date_f" attrs="{'readonly': [('state', 'not in', ('draft','depart'))],'invisible':[('frais_m', 'not in', 'oui')] }"/>
+                    <field name="date_eq" attrs="{'invisible':[('equipement', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                  </group>
+                </group>
+                <group>
+                  <field name="objet" string="Commentaire" />
+                </group>
+              </page>
+              <page string="Retour" attrs="{'invisible': [('state','not in',('retour','terminer'))]}">
+                <group>
+                  <group>
+                    <field name="date_retour" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
+                  </group>
+                  <group>
+                    <label for="test_cr" string="Test COVID / Date"/>
+                    <div class="o_row" name="test_cr" >
+                      <field name="test_cr" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
+                      <field name="date_cr" attrs="{'invisible':[('test_cr', 'not in', 'oui')],'readonly': [('state', 'not in', ('retour'))]}"/>
+                    </div>
+                  </group>
+                </group>
+                <group>
+                  <group>
+                    <field name="p_financier" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
+                    <field name="p_equipement" attrs="{'readonly': [('state', 'not in', ('retour'))]}"/>
+                  </group>
+                  <group>
+                    <field name="date_pf" attrs="{'readonly': [('state', 'not in', ('retour'))],'invisible':[('p_financier', 'not in', 'oui')] }" />
+                    <field name="date_p_eq" attrs="{'readonly': [('state', 'not in', ('retour'))],'invisible':[('p_equipement', 'not in', 'oui')] }" />
+                  </group>
+                </group>
+                <group>
+                  <field name="objet" string="Commentaire" />
+                </group>
+              </page>
+            </notebook>
           </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers"/>
@@ -351,29 +427,14 @@
       </field>
     </record>
 
-    <!-- Mession ordinaire arrivé -->
+    <!-- Mession ordinaire-->
     <record model="ir.actions.act_window" id="mission_ordinaire_ar_action_window">
-      <field name="name">Mission ordinaire départ</field>
+      <field name="name">Mission Ordinaire</field>
       <field name="res_model">mission.ordinaire</field>
-      <field name="view_id" ref="mission_ordinaire_treeview"/>
-      <field name="domain">[('mission', '=', 'ordinaire_all')]</field>
-      <field name="context">{'default_mission': 'ordinaire_all'}</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Mission ordinaire départ" id="be_mission_mission_ord_arrive" parent="be_mission_ordinaire" action="mission_ordinaire_ar_action_window"/>
-
-    <!-- Mession ordinaire retour -->
-    <record model="ir.actions.act_window" id="mission_ordinaire_ret_action_window">
-      <field name="name">Mission ordinaire retour</field>
-      <field name="res_model">mission.ordinaire</field>
-      <field name="view_id" ref="mission_interne_treeview"/>
-      <field name="domain">[('mission', '=', 'ordinaire_ret')]</field>
-      <field name="context">{'default_mission': 'ordinaire_ret'}</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem name="Mission ordinaire retour" id="be_mission_mission_ord_retour" parent="be_mission_ordinaire" action="mission_ordinaire_ret_action_window"/>
+    <menuitem name="Mission ordinaire" id="be_mission_mission_ord_arrive" parent="be_mission_ordinaire" action="mission_ordinaire_ar_action_window"/>
 
     <!-- Reporting Ticket -->
     <!-- Treeview Reporting Ticket -->

@@ -13,28 +13,27 @@ class MissionExterne(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Service Number', copy=False, default="Nouveau")
+    date = fields.Date(
+        string='Date',
+        default=fields.Date.today(),
+        required=True, readonly=True)
     person_name = fields.Many2one(
         'res.partner', string="Nom et Prénom", required=True)
-    employee_id = fields.Many2one('hr.employee', string='Employée', default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1),
+    employee_id = fields.Many2one('hr.employee', string='Employée',
+                                  default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1),
                                   required=True, copy=True)
     date_depart = fields.Date(
         string='Date de départ', default=fields.Date.context_today, store=True, required=False)
-    date_exp = fields.Date(string='Date d\'expération', required=False)
+    date_exp = fields.Date(string='Date d\'expiration', required=False)
 
     date_arriver = fields.Date(
         string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
 
-    mission = fields.Selection(string='Mission', selection=[('externe_ar', 'Mission Externe Arrivé'),
-                                                            ('externe_de', 'Mission Externe Départ'), ],
-                               required=True, index=True, readonly=True, tracking=True, change_default=True)
     passport = fields.Char(string='Numéro de Passport', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
 
-    visa = fields.Selection(string='Visa', selection=[(
-        'oui', 'Oui'), ('non', 'Non')], required=False, )
-    date_visa = fields.Date(
-        string='Date',
-        required=False)
+    visa = fields.Selection(string='Visa', selection=[('oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_visa = fields.Date(string='Date', required=False)
     l_invitation = fields.Selection(string='Lettre d\'invitation', selection=[
         ('oui', 'Oui'), ('non', 'Non')], required=False, )
     date_lettre = fields.Date(
@@ -50,8 +49,15 @@ class MissionExterne(models.Model):
     responsable = fields.Char(string='Nom personne ressource', required=False)
     post = fields.Char(string='Fonction personne ressource', required=False)
 
-    test_c = fields.Boolean(string='Test COVID', required=False)
-    date_c = fields.Date(string='Date de test covid', required=False)
+    test_ca = fields.Selection(string='Test COVID', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+
+    date_ca = fields.Date(string='Date de test covid', required=False)
+
+    test_cd = fields.Selection(string='Test COVID', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+
+    date_cd = fields.Date(string='Date de test covid', required=False)
 
     hotel = fields.Char(string='Nom de Hotel', required=False)
     duree_s = fields.Float(string='Duree de séjour', required=False)
@@ -78,12 +84,38 @@ class MissionExterne(models.Model):
                                                                     'Trés-bien'),
                                                                    ('excel', 'Excelente'), ], required=False, )
 
+    state = fields.Selection([
+        ('draft', 'Nouveau'),
+        ('arriver', 'Arriver'),
+        ('depart', 'Départ'),
+        ('terminer', 'Terminer'),
+        ('cancel', 'Annuler')],
+        default='draft',
+        track_visibility='onchange',)
+        
+
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code(
             'mission.externe') or _('Nouveau')
         res = super(MissionExterne, self).create(vals)
         return res
+
+    def action_arriver(self):
+        for rec in self:
+            rec.state = 'arriver'
+
+    def action_depart(self):
+        for rec in self:
+            rec.state = 'depart'
+
+    def action_terminer(self):
+        for rec in self:
+            rec.state = 'terminer'
+
+    def action_cancel(self):
+        for rec in self:
+            rec.state = 'cancel'
 
 
 class MissionInterne(models.Model):
@@ -93,15 +125,19 @@ class MissionInterne(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Service Number', copy=False, default="Nouveau")
+    date = fields.Date(
+        string='Date',
+        default=fields.Date.today(),
+        required=True, readonly=True)
     employee_id = fields.Many2one('hr.employee', string='Employée', default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1),
                                   required=True, copy=True)
-    date_creation = fields.Date(
-        string='Date de Création', default=fields.Date.context_today, store=True, required=False)
-    date_exp = fields.Date(string='Date d\'expération', required=False)
+    date_depart = fields.Date(
+        string='Date de départ', default=fields.Date.context_today, store=True, required=False)
+    date_exp = fields.Date(string='Date d\'expiration', required=False)
 
-    mission = fields.Selection(string='Mission', selection=[('interne_dep', 'Mission étranger départ'),
-                                                            ('interne_ret', 'Mission étranger retour'), ],
-                               required=True, index=True, readonly=True, tracking=True, change_default=True)
+    date_retour = fields.Date(
+        string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
+
 
     passport = fields.Char(string='Numéro de Passport', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
@@ -112,10 +148,13 @@ class MissionInterne(models.Model):
         required=False)
     biller = fields.Selection(string='Achat Biller d\'avion', selection=[
                               ('oui', 'Oui'), ('non', 'Non')], required=False, )
-    visa = fields.Selection(string='Visa', selection=[(
-        'oui', 'Oui'), ('non', 'Non')], required=False, )
+    visa = fields.Selection(string='Visa', selection=[('oui', 'Oui'), ('non', 'Non')], required=False)
+    date_visa = fields.Date(string='Date', required=False)
+
     l_invitation = fields.Selection(string='Lettre d\'invitation', selection=[
                                     ('oui', 'Oui'), ('non', 'Non')], required=False, )
+
+    date_lettre = fields.Date(string='Date',  required=False)
 
     vehicule = fields.Selection(string='Besoin de véhicule?', selection=[
                                 ('oui', 'Oui'), ('non', 'Non')], required=False, )
@@ -126,9 +165,13 @@ class MissionInterne(models.Model):
     responsable = fields.Char(string='Nom de Responsable', required=False)
     post = fields.Char(string='Post de responsable', required=False)
 
-    test_c = fields.Selection(string='Test COVID', selection=[
-                              ('oui', 'Oui'), ('non', 'Non')], required=False, )
-    date_c = fields.Date(string='Date de test covid', required=False)
+    test_cr = fields.Selection(string='Test COVID', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_cr = fields.Date(string='Date de test covid', required=False)
+
+    test_cd = fields.Selection(string='Test COVID', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_cd = fields.Date(string='Date de test covid', required=False)
 
     frais_m = fields.Selection(string='Frais de Mission', selection=[
                                ('oui', 'Oui'), ('non', 'Non')], required=False, )
@@ -137,12 +180,37 @@ class MissionInterne(models.Model):
                                    ('oui', 'Oui'), ('non', 'Non')], required=False, )
     date_pf = fields.Date(string='Date point financier', required=False)
 
+    state = fields.Selection([
+        ('draft', 'Nouveau'),
+        ('depart', 'Départ'),
+        ('retour', 'Retour'),
+        ('terminer', 'Terminer'),
+        ('cancel', 'Annuler')],
+        default='draft',
+        track_visibility='onchange', )
+
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code(
             'mission.interne') or _('Nouveau')
         res = super(MissionInterne, self).create(vals)
         return res
+
+    def action_depart(self):
+        for rec in self:
+            rec.state = 'depart'
+
+    def action_retour(self):
+        for rec in self:
+            rec.state = 'retour'
+
+    def action_terminer(self):
+        for rec in self:
+            rec.state = 'terminer'
+
+    def action_cancel(self):
+        for rec in self:
+            rec.state = 'cancel'
 
 
 class MissionOrdinaire(models.Model):
@@ -152,17 +220,22 @@ class MissionOrdinaire(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Service Number', copy=False, default="Nouveau")
-    employee_id = fields.Many2one('hr.employee', string='Employée', default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1),
+    date = fields.Date(
+        string='Date',
+        default=fields.Date.today(),
+        required=True, readonly=True)
+    employee_id = fields.Many2one('hr.employee', string='Employée',
+                                  default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)],
+                                                                                      limit=1),
                                   required=True, copy=True)
-    date_creation = fields.Date(
-        string='Date de Création', default=fields.Date.context_today, store=True, required=False)
-    date_exp = fields.Date(string='Date d\'expération', required=False)
+    date_depart = fields.Date(
+        string='Date de départ', default=fields.Date.context_today, store=True, required=False)
+    date_exp = fields.Date(string='Date d\'expiration', required=False)
 
-    mission = fields.Selection(string='Mission', selection=[('ordinaire_all', 'Mission ordinaire aller'),
-                                                            ('ordinaire_ret', 'Mission ordinaire retour'), ],
-                               required=True, index=True, readonly=True, tracking=True, change_default=True)
+    date_retour = fields.Date(
+        string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
 
-    passport = fields.Char(string='Numéro passeport/CIN', required=False)
+    passport = fields.Char(string='Passeport/CIN', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
     o_mission = fields.Selection(string='Ordre de mission', selection=[
                                  ('oui', 'Oui'), ('non', 'Non')], required=False, )
@@ -170,11 +243,11 @@ class MissionOrdinaire(models.Model):
     date_mission = fields.Date(
         string='Date de mission',
         required=False)
-    p_carburant = fields.Selection(string='carburant', selection=[
+    p_carburant = fields.Selection(string='Carburant', selection=[
         ('oui', 'Oui'), ('non', 'Non')], required=False, )
 
     date_p_carburant = fields.Date(
-        string='Date de mission',
+        string='Date',
         required=False)
 
     vehicule = fields.Selection(string='Besoin de véhicule?', selection=[
@@ -186,9 +259,13 @@ class MissionOrdinaire(models.Model):
     responsable = fields.Char(string='Nom de Responsable', required=False)
     post = fields.Char(string='Post de responsable', required=False)
 
-    test_c = fields.Selection(string='Test COVID', selection=[
-                              ('oui', 'Oui'), ('non', 'Non')], required=False, )
-    date_c = fields.Date(string='Date de test covid', required=False)
+    test_cr = fields.Selection(string='Test COVID', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_cr = fields.Date(string='Date de test covid', required=False)
+
+    test_cd = fields.Selection(string='Test COVID', selection=[(
+        'oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_cd = fields.Date(string='Date de test covid', required=False)
 
     frais_m = fields.Selection(string='Frais de Mission', selection=[
                                ('oui', 'Oui'), ('non', 'Non')], required=False, )
@@ -201,9 +278,9 @@ class MissionOrdinaire(models.Model):
         ('oui', 'Oui'), ('non', 'Non')], required=False, )
     date_eq = fields.Date(string='Date point financier', required=False)
 
-    p_equipement = fields.Selection(string='Equipement?', selection=[
+    p_equipement = fields.Selection(string='Point Equipement?', selection=[
         ('oui', 'Oui'), ('non', 'Non')], required=False, )
-    date_p_eq = fields.Date(string='Date point financier', required=False)
+    date_p_eq = fields.Date(string='Date point Equipement', required=False)
 
     @api.model
     def create(self, vals):
@@ -211,6 +288,38 @@ class MissionOrdinaire(models.Model):
             'mission.ordinaire') or _('Nouveau')
         res = super(MissionOrdinaire, self).create(vals)
         return res
+
+    state = fields.Selection([
+        ('draft', 'Nouveau'),
+        ('depart', 'Départ'),
+        ('retour', 'Retour'),
+        ('terminer', 'Terminer'),
+        ('cancel', 'Annuler')],
+        default='draft',
+        track_visibility='onchange', )
+
+    @api.model
+    def create(self, vals):
+        vals['name'] = self.env['ir.sequence'].next_by_code(
+            'mission.interne') or _('Nouveau')
+        res = super(MissionInterne, self).create(vals)
+        return res
+
+    def action_depart(self):
+        for rec in self:
+            rec.state = 'depart'
+
+    def action_retour(self):
+        for rec in self:
+            rec.state = 'retour'
+
+    def action_terminer(self):
+        for rec in self:
+            rec.state = 'terminer'
+
+    def action_cancel(self):
+        for rec in self:
+            rec.state = 'cancel'
 
 
 class ReportingTicket(models.Model):
