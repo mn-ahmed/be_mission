@@ -23,17 +23,6 @@ class MissionExterne(models.Model):
 
     date_arriver = fields.Date(
         string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
-    date_exp = fields.Date(string='Date d\'expération', required=False)
-
-    @api.onchange('date_exp')
-    def check_date(self):
-        if self.date_exp != False:
-            date_exp_string = datetime.strptime(str(self.date_exp), "%Y-%m-%d")
-            date_create_string = datetime.strptime(
-                str(self.date_creation), "%Y-%m-%d")
-            if date_exp_string < date_create_string:
-                raise UserError(
-                    "la date d'expiration doit être supérieure à la date de création")
 
     mission = fields.Selection(string='Mission', selection=[('externe_ar', 'Mission Externe Arrivé'),
                                                             ('externe_de', 'Mission Externe Départ'), ],
@@ -110,16 +99,6 @@ class MissionInterne(models.Model):
         string='Date de Création', default=fields.Date.context_today, store=True, required=False)
     date_exp = fields.Date(string='Date d\'expération', required=False)
 
-    @api.onchange('date_exp')
-    def check_date(self):
-        if self.date_exp != False:
-            date_exp_string = datetime.strptime(str(self.date_exp), "%Y-%m-%d")
-            date_create_string = datetime.strptime(
-                str(self.date_creation), "%Y-%m-%d")
-            if date_exp_string < date_create_string:
-                raise UserError(
-                    "la date d'expiration doit être supérieure à la date de création")
-
     mission = fields.Selection(string='Mission', selection=[('interne_dep', 'Mission étranger départ'),
                                                             ('interne_ret', 'Mission étranger retour'), ],
                                required=True, index=True, readonly=True, tracking=True, change_default=True)
@@ -179,16 +158,6 @@ class MissionOrdinaire(models.Model):
         string='Date de Création', default=fields.Date.context_today, store=True, required=False)
     date_exp = fields.Date(string='Date d\'expération', required=False)
 
-    @api.onchange('date_exp')
-    def check_date(self):
-        if self.date_exp != False:
-            date_exp_string = datetime.strptime(str(self.date_exp), "%Y-%m-%d")
-            date_create_string = datetime.strptime(
-                str(self.date_creation), "%Y-%m-%d")
-            if date_exp_string < date_create_string:
-                raise UserError(
-                    "la date d'expiration doit être supérieure à la date de création")
-
     mission = fields.Selection(string='Mission', selection=[('ordinaire_all', 'Mission ordinaire aller'),
                                                             ('ordinaire_ret', 'Mission ordinaire retour'), ],
                                required=True, index=True, readonly=True, tracking=True, change_default=True)
@@ -207,8 +176,7 @@ class MissionOrdinaire(models.Model):
     date_p_carburant = fields.Date(
         string='Date de mission',
         required=False)
-    biller = fields.Selection(string='Achat Biller d\'avion', selection=[
-                              ('oui', 'Oui'), ('non', 'Non')], required=False, )
+
     vehicule = fields.Selection(string='Besoin de véhicule?', selection=[
                                 ('oui', 'Oui'), ('non', 'Non')], required=False, )
     n_chauffeur = fields.Char(string='Nom de Chauffeur', required=False)
@@ -228,6 +196,14 @@ class MissionOrdinaire(models.Model):
     p_financier = fields.Selection(string='Point financier?', selection=[
                                    ('oui', 'Oui'), ('non', 'Non')], required=False, )
     date_pf = fields.Date(string='Date point financier', required=False)
+
+    equipement = fields.Selection(string='Equipement?', selection=[
+        ('oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_eq = fields.Date(string='Date point financier', required=False)
+
+    p_equipement = fields.Selection(string='Equipement?', selection=[
+        ('oui', 'Oui'), ('non', 'Non')], required=False, )
+    date_p_eq = fields.Date(string='Date point financier', required=False)
 
     @api.model
     def create(self, vals):
@@ -278,43 +254,3 @@ class ReportingTicket(models.Model):
         res = super(ReportingTicket, self).create(vals)
         return res
 
-
-class VoyageVacance(models.Model):
-    _name = 'voyage.vacance'
-    _description = 'vaoyage vacance'
-    _rec_name = 'name'
-    _order = 'name ASC'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-
-    name = fields.Char(string='Name', required=True,
-                       default=lambda self: _('New'), copy=False)
-    currency_id = fields.Many2one('res.currency', 'Currency', required=True, default=lambda self: self.env.company.currency_id.id)
-    person_name = fields.Many2one('res.partner', string="Nom et Prénom", required=True)
-
-    date_a = fields.Date(string='Date d\'aller', store=True, required=False)
-    date_r = fields.Date(string='Date retour', required=False)
-    trajet = fields.Char(string='Trajet', Required=False)
-    nature = fields.Char(string='Nature', required=False)
-    montant_b = fields.Float(string='Montant Billet',digits = (12,2))
-    montant_bm = fields.Float(string='Montant Billet modifié', digits = (12,2))
-    montant_bmt = fields.Float( string='Montant Billet modifié (Trajet)',digits = (12,2))
-
-    montant_total = fields.Float(compute='_compute_montant_total', string='Montant total', digits = (12,2))
-
-    @api.depends('montant_b', 'montant_bm', 'montant_bmt')
-    def _compute_montant_total(self):
-        for record in self:
-            montant_total = 0.0
-            montant_b = record.montant_b
-            montant_bm = record.montant_bm
-            montant_bmt = record.montant_bmt
-            record.update({
-                'montant_total': record.currency_id.round(montant_b) + record.currency_id.round(montant_bm) + record.currency_id.round(montant_bmt)
-            })
-
-    @api.model
-    def create(self, vals):
-        vals['name'] = self.env['ir.sequence'].next_by_code(
-            'voyage.vacance') or _('Nouveau')
-        res = super(VoyageVacance, self).create(vals)
-        return res
