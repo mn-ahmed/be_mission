@@ -60,8 +60,8 @@ class MissionExterne(models.Model):
     date_cd = fields.Date(string='Date de test covid', required=False)
 
     hotel = fields.Char(string='Nom de Hotel', required=False)
-    duree_s = fields.Float(string='Duree de séjour', required=False)
-    duree_h = fields.Float(string='Duree de séjour hotel', required=False)
+    duree_s = fields.Char(string='Duree de séjour', required=False)
+    duree_h = fields.Char(string='Duree de séjour hotel', required=False)
     autres = fields.Char(
         string='Autres', 
         required=False)
@@ -301,8 +301,8 @@ class MissionOrdinaire(models.Model):
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code(
-            'mission.interne') or _('Nouveau')
-        res = super(MissionInterne, self).create(vals)
+            'mission.ordinaire') or _('Nouveau')
+        res = super(MissionOrdinaire, self).create(vals)
         return res
 
     def action_depart(self):

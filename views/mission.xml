@@ -49,7 +49,7 @@
                    <label for="test_ca" string="Test COVID / Date"/>
                       <div class="o_row" name="test_ca" >
                           <field name="test_ca" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
-                          <field name="date_ca" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                          <field name="date_ca" attrs="{'invisible':[('test_ca', 'not in',('oui'))],'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
                       </div>
               </group>
                  <group>
@@ -61,7 +61,7 @@
                   <label for="l_invitation" string="Lettre d'invitation"/>
                       <div class="o_row" name="l_invitation" >
                           <field name="l_invitation" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
-                          <field name="date_lettre" attrs="{'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
+                          <field name="date_lettre" attrs="{'invisible':[('l_invitation', 'not in',('oui'))],'readonly': [('state', 'not in', ('draft','arriver'))]}"/>
                       </div>
 
               </group>
@@ -109,7 +109,7 @@
                     <label for="test_cd" string="Test COVID / Date"/>
                       <div class="o_row" name="test_cd" >
                           <field name="test_cd" attrs="{'readonly': [('state', '!=', 'depart')]}"/>
-                          <field name="date_ca" attrs="{'readonly': [('state', '!=', 'depart')]}"/>
+                          <field name="date_cd" attrs="{'invisible': [('test_cd','not in','oui')],'readonly': [('state', '!=', 'depart')]}"/>
                       </div>
                   </group>
                   <group>

@@ -10,65 +10,181 @@
         />
 
          <template id="mission_externe_ticket_template">
-            <t t-call="web.external_layout">
              <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="doc">
-
+                 <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.internal_layout">
                         <div class="page">
-                            <div class="text-center">
-                                <h2>
-                                    <strong><p>Mission Exterene : <span t-field="doc.name"/></p></strong>
-                                 </h2>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h2>
+                                        <strong>
+                                            <p>Mission Exterene </p>
+                                            <p t-field="doc.name"/>
+                                        </strong>
+                                        <br/>
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <table class="table table-responsive" style="border: 2px solid black;">
+                                        <tr>
+                                            <td><strong>Nom et Prénom :</strong></td><td> <span t-field="doc.person_name"/></td>
+                                        </tr>
+                                        <tr>
+                                           <td><strong>Numéro de Passport :</strong></td><td> <span t-field="doc.passport"/></td>
+                                       </tr>
+                                        <tr>
+                                           <td><strong>Date d'Expiration :</strong></td><td> <span t-field="doc.date_exp"/></td>
+                                       </tr>
+                                    </table>
+                                </div>
                             </div>
                             <br/>
-                            <div class="row">
-                                <div class="col-xs-6">
-                                <table style="width:100%;">
-                                    <tbody style="line-height:2">
+                            <div class="row" >
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <strong>
+                                            <h4>
+                                                ARRIVE :
+                                            </h4>
+                                        </strong>
+                                    </div>
+                                    <table class="table table-sm" style="page-break-inside: avoid;">
                                         <tr>
-                                            <td><strong>Nom et Prénom:</strong></td><td></td>
-                                            <td><strong>&#160;<span t-field="doc.person_name"/></strong></td>
+                                            <td><strong>Date d'Arrivé</strong></td>
+                                            <td class="text-right" colspan="2"> <span t-field="doc.date_arriver"/></td>
+                                        </tr>
+                                        <t t-if="doc.test_ca != 'oui'">
+                                            <tr>
+                                                <td><strong>Test COVID :</strong></td>
+                                                <td class="text-right" colspan="2"> <span t-field="doc.test_ca"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-else="">
+                                             <tr>
+                                                <td><strong>Test COVID :</strong></td>
+                                                <td> <span t-field="doc.test_ca"/></td>
+                                                <td class="text-right"><strong>Date : </strong><span t-field="doc.date_ca"/></td>
+                                             </tr>
+                                        </t>
+                                        <tr>
+                                            <t t-if="doc.visa != 'oui'">
+                                                <td><strong>VISA :</strong></td>
+                                                <td colspan="2" class="text-right"> <span t-field="doc.visa"/></td>
+                                            </t>
+                                            <t t-else="">
+                                                <td><strong>VISA :</strong></td>
+                                                <td> <span t-field="doc.visa"/></td>
+                                                <td class="text-right"><strong>Date  : </strong><span t-field="doc.date_visa"/></td>
+                                            </t>
                                         </tr>
                                         <tr>
-                                            <td><strong>Passport:</strong></td><td></td>
-                                            <td><span t-field="doc.passport"/></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                                    <div class="col-xs-6" >
-                                <table style="width:100%;">
-                                    <tbody style="line-height:2">
-                                        <tr>
-                                            <td ><strong>Date:</strong></td><td></td>
-                                            <td>&#160;<span t-field="doc.date_creation"/></td>
+                                            <t t-if="doc.l_invitation != 'oui'">
+                                                <td><strong>Lettre d'invitation :</strong></td>
+                                                <td class="text-right" colspan="2"> <span t-field="doc.l_invitation"/></td>
+                                            </t>
+                                            <t t-else="">
+                                                <td><strong>Lettre d'invitation :</strong></td>
+                                                <td> <span t-field="doc.l_invitation"/></td>
+                                                <td class="text-right" colspan="2"><strong>Date : </strong><span t-field="doc.date_lettre"/></td>
+                                            </t>
                                         </tr>
                                         <tr>
-                                            <td><strong>Date d'expération:</strong></td><td></td>
-                                            <td><span t-field="doc.date_exp"/></td>
+                                            <td><strong>Objet Mission :</strong></td>
+                                            <td colspan="2" class="text-center"> <span t-field="doc.objet"/></td>
                                         </tr>
+                                        <tr>
+                                            <td><strong>Fonction voyageur :</strong></td>
+                                            <td colspan="2" class="text-center"> <span t-field="doc.post_v"/></td>
+                                        </tr>
+                                         <tr>
+                                            <td><strong>Nom de Hotel :</strong></td>
+                                            <td colspan="2" class="text-center"> <span t-field="doc.hotel"/></td>
+                                        </tr>
+                                        <tr>
+                                            <t t-if="doc.frais_h != 'autres'">
+                                                <td><strong>Frais de Hotel :</strong></td>
+                                                <td class="text-right" colspan="2"> <span t-field="doc.frais_h"/></td>
+                                            </t>
+                                            <t t-else="">
+                                                <td><strong>Frais de Hotel :</strong></td>
+                                                <td> <span t-field="doc.frais_h"/></td>
+                                                <td class="text-center" colspan="2"><strong></strong><span t-field="doc.commentaire"/></td>
+                                            </t>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Duree de séjour :</strong></td>
+                                            <td colspan="2" class="text-center"> <span t-field="doc.duree_s"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Duree de séjour hotel :</strong></td>
+                                            <td colspan="2" class="text-center"> <span t-field="doc.duree_h"/></td>
+                                        </tr>
+                                        <t t-if="doc.chauffeur">
+                                            <tr>
+                                                <td><strong>Nom de Chauffeur :</strong></td>
+                                                <td colspan="2" class="text-center"> <span t-field="doc.n_chauffeur"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Contact de Chauffeur :</strong></td>
+                                                <td colspan="2" class="text-center"> <span t-field="doc.chauffeur_cont"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Matricule de Véhicule :</strong></td>
+                                                <td colspan="2" class="text-center"> <span t-field="doc.matricule"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Durée d'util. de Véhicule :</strong></td>
+                                                <td colspan="2" class="text-center"> <span t-field="doc.duree_b"/></td>
+                                            </tr>
+                                        </t>
+                                         <tr>
+                                             <td><strong>Nom personne ressource :</strong></td>
+                                             <td colspan="2" class="text-center"> <span t-field="doc.responsable"/></td>
+                                         </tr>
+                                         <tr>
+                                                <td><strong>Fonction personne ressource :</strong></td>
+                                                <td colspan="2" class="text-center"> <span t-field="doc.post"/></td>
+                                            </tr>
 
-                                    </tbody>
-                                </table>
+                                    </table>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <strong>
+                                            <h4>
+                                                DEPART :
+                                            </h4>
+                                        </strong>
+                                    </div>
+                                    <table class="table table-sm" style="page-break-inside: avoid;">
+                                        <tr>
+                                            <td><strong>Date de Départ</strong></td>
+                                            <td> <span t-field="doc.date_depart"/></td>
+                                        </tr>
+                                        <tr>
+                                            <t t-if="doc.test_cd != 'oui'">
+                                                <td><strong>Test COVID :</strong></td>
+                                                <td colspan="2" class="text-right"> <span t-field="doc.test_cd"/></td>
+                                            </t>
+                                            <t t-else="">
+                                                <td><strong>Test COVID :</strong></td>
+                                                <td> <span t-field="doc.visa"/></td>
+                                                <td class="text-right"><strong>Date : </strong><span t-field="doc.date_cd"/></td>
+                                            </t>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Satisfaction</strong></td>
+                                            <td> <span t-field="doc.satisfact"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
-                            </div>
-                                <br/>
-                             <div class="row">
-                                <table class="table table-sm o_main_table">
-                               <tr style="border: 2px solid black;">
-                                   <td><strong>Test Covid</strong></td><td> <span t-field="doc.test_c"/></td>
-                                   <td><strong>Date de Test Covide</strong></td><td> <span t-field="doc.date_c"/></td>
-                               </tr>
-                               <tr style="border: 2px solid black;">
-                                   <td><strong>Objet de Mission</strong></td><td> <span t-field="doc.objet"/></td>
-
-                               </tr>
-                            </table>
-                             </div>
                         </div>
                     </t>
-                </t>
-            </t>
+                 </t>
+             </t>
          </template>
      </data>
 </odoo>
