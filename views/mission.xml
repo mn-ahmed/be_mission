@@ -9,7 +9,7 @@
     <menuitem name="Mission Externe" id="be_mission_extern" parent="be_mission" sequence="10" />
     <menuitem name="Mission Interne" id="be_mission_interne" parent="be_mission" sequence="20" />
     <menuitem name="Mission Ordinaire" id="be_mission_ordinaire" parent="be_mission" sequence="30"/>
-    <menuitem name="Reporting Tecket" id="be_mission_report_teckit" parent="be_mission" sequence="40"/>
+    <menuitem name="Reporting Ticket" id="be_mission_report_teckit" parent="be_mission" sequence="40"/>
 
     <!-- Mission Externe-->
     <!-- form view Mission Externe -->

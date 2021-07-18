@@ -346,12 +346,12 @@ class ReportingTicket(models.Model):
                                   required=True, copy=True)
 
     date_v = fields.Date(string='Date de Voyage', store=True, required=False)
-    date_r = fields.Date(string='date retour', required=False)
+    date_r = fields.Date(string='Date retour', required=False)
     trajet = fields.Char(string='Trajet', Required=False)
     nature = fields.Char(string='Nature', required=False)
-    montant_b = fields.Float(string='Montant Billet',digits = (12,2))
-    montant_bm = fields.Float(string='Montant Billet modifié', digits = (12,2))
-    montant_bmt = fields.Float( string='Montant Billet modifié (Trajet)',digits = (12,2))
+    montant_b = fields.Float(string='Montant Billet',digits=(12,2))
+    montant_bm = fields.Float(string='Montant Billet modifié', digits=(12,2))
+    montant_bmt = fields.Float(string='Montant Billet modifié (Trajet)', digits=(12,2))
 
     montant_total = fields.Float(compute='_compute_montant_total', string='Montant total', digits = (12,2))
 
