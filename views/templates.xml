@@ -571,7 +571,7 @@
 
          <!-- Report Reporting ticket -->
          <report
-             id="report_reportin_ticket"
+             id="report_reporting_ticket"
              model="reporting.ticket"
              string="Reporting Ticket"
              report_type="qweb-pdf"
@@ -617,25 +617,108 @@
                                              <tr class="border-black o_subtotal">
                                                  <td><strong>Montant Billet:</strong></td>
                                                  <td class="text-right">
-                                                    <span t-field="doc.montant_b"/>
+                                                    <span t-field="doc.montant_b" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                                                  </td>
                                              </tr>
                                              <tr class="border-black o_subtotal">
                                                  <td><strong>Montant Billet modifié:</strong></td>
                                                  <td class="text-right">
-                                                    <span t-field="doc.montant_bm"/>
+                                                    <span t-field="doc.montant_bm" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                                                  </td>
                                              </tr>
                                             <tr class="border-black o_subtotal">
                                                  <td><strong>Montant Billet modifié (Trajet):</strong></td>
                                                  <td class="text-right">
-                                                    <span t-field="doc.montant_bmt"/>
+                                                    <span t-field="doc.montant_bmt" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                                                  </td>
                                             </tr>
                                              <tr class="border-black o_total">
                                                  <td><strong>Montant Total:</strong></td>
                                                  <td class="text-right">
-                                                     <span class="text-nowrap" t-field="doc.montant_total"/>
+                                                     <span class="text-nowrap" t-field="doc.montant_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                </td>
+                                             </tr>
+                                         </table>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </t>
+                 </t>
+             </t>
+         </template>
+
+          <!-- Report Voyage vacance -->
+         <report
+             id="report_voyage_vacance_ticket"
+             model="voyage.vacance"
+             string="Tcket Frais de Billet"
+             report_type="qweb-pdf"
+             name="be_mission.mission_voyage_ticket_ticket_template"
+             file="be_mission.mission_voyage_ticket_ticket_template"
+             />
+
+         <template id="mission_voyage_ticket_ticket_template">
+             <t t-call="web.html_container">
+                 <t t-foreach="docs" t-as="doc">
+                     <t t-call="web.external_layout">
+                         <div class="page">
+                             <h2>
+                                 <span>Frais Billet d'Avion</span>
+                                 <p t-field="doc.name"/>
+                             </h2>
+                             <div class="row">
+                                 <div class="col-12">
+                                     <table class="table table-sx" style="page-preak-inside: avoid;">
+                                         <tr>
+                                             <td><strong>Nom et Prénom :</strong></td>
+                                             <td class="text-left"><span t-field="doc.employee_id"/></td>
+                                             <td><strong>Date de Voyage :</strong></td>
+                                             <td class="text-right"><span t-field="doc.date_a"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td><strong>Bénéficiaire :</strong></td>
+                                             <td class="text-left"><span t-field="doc.beneficiaire"/></td>
+                                             <td><strong>Date de Retour :</strong></td>
+                                             <td class="text-right"><span t-field="doc.date_r"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td><strong>Trajet :</strong></td>
+                                             <td class="text-left"><span t-field="doc.trajet"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td><strong>Nature :</strong></td>
+                                             <td class="text-left"><span t-field="doc.nature"/></td>
+                                         </tr>
+                                     </table>
+                                 </div>
+                             </div>
+                             <div class="clearfix">
+                                 <div class="row">
+                                     <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                                         <table class="table table-sm" style="page-break-inside: avoid;">
+                                             <tr class="border-black o_subtotal">
+                                                 <td><strong>Montant Billet:</strong></td>
+                                                 <td class="text-right">
+                                                    <span t-field="doc.montant_b" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                 </td>
+                                             </tr>
+                                             <tr class="border-black o_subtotal">
+                                                 <td><strong>Montant Billet modifié:</strong></td>
+                                                 <td class="text-right">
+                                                    <span t-field="doc.montant_bm" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                 </td>
+                                             </tr>
+                                            <tr class="border-black o_subtotal">
+                                                 <td><strong>Montant Billet modifié (Trajet):</strong></td>
+                                                 <td class="text-right">
+                                                    <span t-field="doc.montant_bmt" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                 </td>
+                                            </tr>
+                                             <tr class="border-black o_total">
+                                                 <td><strong>Montant Total:</strong></td>
+                                                 <td class="text-right">
+                                                     <span class="text-nowrap" t-field="doc.montant_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                                                 </td>
                                              </tr>
                                          </table>

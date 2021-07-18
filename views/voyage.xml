@@ -72,13 +72,13 @@
 
         <!-- action voyage vacance -->
         <record model="ir.actions.act_window" id="voyage_vacance_action_window">
-          <field name="name">Frais Billet Avions</field>
+          <field name="name">Frais Billet d'Avion</field>
           <field name="res_model">voyage.vacance</field>
           <field name="view_id" ref="mission_voyage_vacance_treeview"/>
           <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem name="Frais Billet Avions" id="be_menu_voyage_vacance" parent="be_mission_voyage_vacance" action="voyage_vacance_action_window"/>
+        <menuitem name="Frais Billet d'Avion" id="be_menu_voyage_vacance" parent="be_mission_voyage_vacance" action="voyage_vacance_action_window"/>
 
     </data>
 </odoo>
