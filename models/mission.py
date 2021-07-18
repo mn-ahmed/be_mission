@@ -136,7 +136,7 @@ class MissionInterne(models.Model):
     date_exp = fields.Date(string='Date d\'expiration', required=False)
 
     date_retour = fields.Date(
-        string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
+        string='Date de Retour', default=fields.Date.context_today, store=True, required=False)
 
 
     passport = fields.Char(string='Numéro de Passport', required=False)
@@ -146,7 +146,7 @@ class MissionInterne(models.Model):
     date_mission = fields.Date(
         string='Date de mission',
         required=False)
-    biller = fields.Selection(string='Achat Biller d\'avion', selection=[
+    billet = fields.Selection(string='Achat Billet d\'avion', selection=[
                               ('oui', 'Oui'), ('non', 'Non')], required=False, )
     visa = fields.Selection(string='Visa', selection=[('oui', 'Oui'), ('non', 'Non')], required=False)
     date_visa = fields.Date(string='Date', required=False)
@@ -179,6 +179,9 @@ class MissionInterne(models.Model):
     p_financier = fields.Selection(string='Point financier?', selection=[
                                    ('oui', 'Oui'), ('non', 'Non')], required=False, )
     date_pf = fields.Date(string='Date point financier', required=False)
+    commentaire = fields.Text(
+        string="Commentaire",
+        required=False)
 
     state = fields.Selection([
         ('draft', 'Nouveau'),
@@ -233,7 +236,7 @@ class MissionOrdinaire(models.Model):
     date_exp = fields.Date(string='Date d\'expiration', required=False)
 
     date_retour = fields.Date(
-        string='Date d\'arrivéé', default=fields.Date.context_today, store=True, required=False)
+        string='Date de Retour', default=fields.Date.context_today, store=True, required=False)
 
     passport = fields.Char(string='Passeport/CIN', required=False)
     objet = fields.Text(string="Objet Mission", required=False)
@@ -281,6 +284,13 @@ class MissionOrdinaire(models.Model):
     p_equipement = fields.Selection(string='Point Equipement?', selection=[
         ('oui', 'Oui'), ('non', 'Non')], required=False, )
     date_p_eq = fields.Date(string='Date point Equipement', required=False)
+
+    commentaire_dep = fields.Text(
+        string="Commentaire",
+        required=False)
+    commentaire_ret = fields.Text(
+        string="Commentaire",
+        required=False)
 
     @api.model
     def create(self, vals):

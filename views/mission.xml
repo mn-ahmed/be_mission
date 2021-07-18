@@ -214,7 +214,7 @@
                   <field name="o_mission" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
                   <field name="date_mission" attrs="{'invisible':[('o_mission', 'not in', 'oui')],'readonly': [('state', 'not in', ('draft','depart'))]}"/>
                 </div>
-                <field name="biller" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+                <field name="billet" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
               </group>
               <group>
                   <label for="visa" string="VISA / Date" />
@@ -250,7 +250,7 @@
             </group>
 
             <group>
-              <field name="objet" string="Commentaire" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
+              <field name="commentaire" string="Commentaire" attrs="{'readonly': [('state', 'not in', ('draft','depart'))]}"/>
             </group>
             </page>
             <page string="Retour" attrs="{'invisible': [('state','not in',('retour','terminer'))]}">
@@ -285,7 +285,7 @@
       </field>
     </record>
 
-    <!-- Mession interne arrivé -->
+    <!-- Mession interne -->
     <record model="ir.actions.act_window" id="mission_interne_ar_action_window">
       <field name="name">Mission étranger</field>
       <field name="res_model">mission.interne</field>
@@ -387,7 +387,7 @@
                   </group>
                 </group>
                 <group>
-                  <field name="objet" string="Commentaire" />
+                  <field name="commentaire_dep" string="Commentaire" />
                 </group>
               </page>
               <page string="Retour" attrs="{'invisible': [('state','not in',('retour','terminer'))]}">
@@ -414,7 +414,7 @@
                   </group>
                 </group>
                 <group>
-                  <field name="objet" string="Commentaire" />
+                  <field name="commentaire_ret" string="Commentaire" />
                 </group>
               </page>
             </notebook>
